@@ -1,0 +1,347 @@
+testbed:
+  name: lab003-python-network-tests
+  credentials:
+    default:
+      username: "%ENV{PYATS_USERNAME}"
+      password: "%ENV{PYATS_PASSWORD}"
+    enable:
+      password: "%ENV{PYATS_PASSWORD}"
+    line:
+      password: "%ENV{PYATS_PASSWORD}"
+    linux:
+      password: "%ENV{PYATS_PASSWORD}"
+
+devices:
+  D1:
+    os: ios
+    platform: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 192.168.5.131
+        arguments:
+          connection_timeout: 10
+
+  D2:
+    os: ios
+    platform: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 192.168.5.132
+        arguments:
+          connection_timeout: 10
+
+  A1:
+    os: ios
+    platform: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 192.168.5.133
+        arguments:
+          connection_timeout: 10
+
+  A2:
+    os: ios
+    platform: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 192.168.5.134
+        arguments:
+          connection_timeout: 10
+
+  A3:
+    os: ios
+    platform: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 192.168.5.135
+        arguments:
+          connection_timeout: 10
+
+topology:
+  links:
+    # Link between Distribution switches
+    D1-D2-PortChannel:
+      type: trunk
+      vlans:
+        - 10
+        - 20
+        - 30
+
+    # Links from Distribution 1 switch to Access switches
+    D1-A1-PortChannel:
+      type: trunk
+      vlans:
+        - 10
+    D1-A2-PortChannel:
+      type: trunk
+      vlans:
+        - 20
+    D1-A3-PortChannel:
+      type: trunk
+      vlans:
+        - 10
+        - 30
+
+    # Links from Distribution 2 switch ot Access switches
+    D2-A1-PortChannel:
+      type: trunk
+      vlans:
+        - 10
+    D2-A2-PortChannel:
+      type: trunk
+      vlans:
+        - 20
+    D2-A3-PortChannel:
+      type: trunk
+      vlans:
+        - 10
+        - 30
+
+    # Links from Access switches to Hosts
+    A1-H1:
+      type: access
+      vlan: 10
+    A2-H2:
+      type: access
+      vlan: 20
+    A3-H3:
+      type: access
+      vlan: 10
+    A3-H4:
+      type: access
+      vlan: 30
+
+  D1:
+    interfaces:
+      GigabitEthernet0/0:
+        link: management
+        type: ethernet
+      GigabitEthernet0/1:
+        link: D1-D2-1
+        type: ethernet
+        channel_group: 1
+      GigabitEthernet0/2:
+        link: D1-D2-2
+        type: ethernet
+        channel_group: 1
+      GigabitEthernet0/3:
+        link: D1-A1-1
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet1/0:
+        link: D1-A1-2
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet1/1:
+        link: D1-A2-1
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/2:
+        link: D1-A2-2
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/3:
+        link: D1-A3-1
+        type: ethernet
+        channel_group: 13
+      GigabitEthernet2/0:
+        link: D1-A3-2
+        type: ethernet
+        channel_group: 13
+      Port-channel1:
+        link: D1-D2-PortChannel
+        type: port-channel
+      Port-channel11:
+        link: D1-A1-PortChannel
+        type: port-channel
+      Port-channel12:
+        link: D1-A2-PortChannel
+        type: port-channel
+      Port-channel13:
+        link: D1-A3-PortChannel
+        type: port-channel
+      Vlan10:
+        type: svi
+        addresses:
+          - 10.10.10.2/24
+      Vlan20:
+        type: svi
+        addresses:
+          - 10.10.20.2/24
+      Vlan30:
+        type: svi
+        addresses:
+          - 10.10.30.2/24
+
+  D2:
+    interfaces:
+      GigabitEthernet0/0:
+        link: management
+        type: ethernet
+      GigabitEthernet0/1:
+        link: D1-D2-1
+        type: ethernet
+        channel_group: 1
+      GigabitEthernet0/2:
+        link: D1-D2-2
+        type: ethernet
+        channel_group: 1
+      GigabitEthernet0/3:
+        link: D2-A1-1
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet1/0:
+        link: D2-A1-2
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet1/1:
+        link: D2-A2-1
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/2:
+        link: D2-A2-2
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/3:
+        link: D2-A3-1
+        type: ethernet
+        channel_group: 13
+      GigabitEthernet2/0:
+        link: D2-A3-2
+        type: ethernet
+        channel_group: 13
+      Port-channel1:
+        link: D1-D2-PortChannel
+        type: port-channel
+      Port-channel11:
+        link: D2-A1-PortChannel
+        type: port-channel
+      Port-channel12:
+        link: D2-A2-PortChannel
+        type: port-channel
+      Port-channel13:
+        link: D2-A3-PortChannel
+        type: port-channel
+      Vlan10:
+        type: svi
+        addresses:
+          - 10.10.10.3/24
+      Vlan20:
+        type: svi
+        addresses:
+          - 10.10.20.3/24
+      Vlan30:
+        type: svi
+        addresses:
+          - 10.10.30.3/24
+
+  A1:
+    interfaces:
+      GigabitEthernet0/0:
+        link: management
+        type: ethernet
+      GigabitEthernet0/1:
+        link: D1-A1-1
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/2:
+        link: D1-A1-2
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/3:
+        link: D2-A1-1
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/0:
+        link: D2-A1-2
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/1:
+        link: A1-H1
+        type: ethernet
+      Port-channel11:
+        link: D1-A1-PortChannel
+        type: port-channel
+      Port-channel12:
+        link: D2-A1-PortChannel
+        type: port-channel
+
+  A2:
+    interfaces:
+      GigabitEthernet0/0:
+        link: management
+        type: ethernet
+      GigabitEthernet0/1:
+        link: D1-A2-1
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/2:
+        link: D1-A2-2
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/3:
+        link: D2-A2-1
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/0:
+        link: D2-A2-2
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/1:
+        link: A2-H2
+        type: ethernet
+      Port-channel11:
+        link: D1-A2-PortChannel
+        type: port-channel
+      Port-channel12:
+        link: D2-A2-PortChannel
+        type: port-channel
+
+  A3:
+    interfaces:
+      GigabitEthernet0/0:
+        link: management
+        type: ethernet
+      GigabitEthernet0/1:
+        link: D1-A3-1
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/2:
+        link: D1-A3-2
+        type: ethernet
+        channel_group: 11
+      GigabitEthernet0/3:
+        link: D2-A3-1
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/0:
+        link: D2-A3-2
+        type: ethernet
+        channel_group: 12
+      GigabitEthernet1/1:
+        link: A3-H3
+        type: ethernet
+      GigabitEthernet1/2:
+        link: A3-H4
+        type: ethernet
+      Port-channel11:
+        link: D1-A3-PortChannel
+        type: port-channel
+      Port-channel12:
+        link: D2-A3-PortChannel
+        type: port-channel
