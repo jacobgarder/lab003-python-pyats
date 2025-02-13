@@ -31,3 +31,8 @@ def main(runtime):
     )
 
     # TODO: Run the Testscript "port_channel_test.py" with a taskid of "Port-channel Tests"
+    run(
+        testscript=os.path.join(SCRIPT_PATH, "port_channel_test.py"),
+        runtime=runtime,
+        taskid="Port-channel Tests",
+    )
